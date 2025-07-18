@@ -1,17 +1,17 @@
-"use client";
-import * as d3 from "d3";
-import { useMemo, useRef, useState } from "react";
-import { MotionConfig, motion } from "framer-motion";
-import * as React from "react";
-import { Button } from "./ui/button";
-import { CopyIcon } from "@radix-ui/react-icons";
-import { z } from "zod";
-import { AI } from "@/app/action";
-import { useAIState } from "ai/rsc";
-import { polygonDrawPrompt } from "@/app/ai-function-prompts";
-import { spring } from "@/lib/utils";
+'use client';
+import * as d3 from 'd3';
+import { useMemo, useRef, useState } from 'react';
+import { MotionConfig, motion } from 'framer-motion';
+import * as React from 'react';
+import { Button } from './ui/button';
+import { CopyIcon } from '@radix-ui/react-icons';
+import { z } from 'zod';
+import { AI } from '@/app/action';
+import { useAIState } from 'ai/rsc';
+import { polygonDrawPrompt } from '@/app/ai-function-prompts';
+import { spring } from '@/lib/utils';
 
-export type PolygonProps = z.infer<(typeof polygonDrawPrompt)["parameters"]>;
+export type PolygonProps = z.infer<(typeof polygonDrawPrompt)['parameters']>;
 
 type Props = PolygonProps & {
   onPointsChage?: (points: string) => void;
@@ -29,7 +29,7 @@ export function Polygon({ onPointsChage, ...props }: Props) {
         style={{
           fontFamily:
             "ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
-          color: "#94a3b8",
+          color: '#94a3b8',
         }}
         viewBox="0 0 300 200"
         width="300"
@@ -41,8 +41,8 @@ export function Polygon({ onPointsChage, ...props }: Props) {
         <polygon
           style={{
             strokeWidth: 1,
-            fill: "#94a3b822",
-            stroke: "currentcolor",
+            fill: '#94a3b822',
+            stroke: 'currentcolor',
           }}
           points={path}
         />
@@ -58,7 +58,7 @@ export function Polygon({ onPointsChage, ...props }: Props) {
         {!isServer && (
           <DragPoints
             points={points}
-            onUpdate={(p) => {
+            onUpdate={p => {
               setPoints(p);
               onPointsChage?.(pointsToPath(p));
             }}
@@ -74,7 +74,7 @@ function CornerMarkings({
   corners,
 }: {
   points: Vector2[];
-  corners?: PolygonProps["corners"];
+  corners?: PolygonProps['corners'];
 }) {
   return (
     <g>
@@ -100,12 +100,12 @@ function CornerMarkings({
             x={x}
             y={y}
             style={{
-              fill: "#475569",
-              fontSize: ".75rem",
-              stroke: "none",
+              fill: '#475569',
+              fontSize: '.75rem',
+              stroke: 'none',
               fontWeight: 600,
-              letterSpacing: "-0.05em",
-              userSelect: "none",
+              letterSpacing: '-0.05em',
+              userSelect: 'none',
             }}
             dominantBaseline="middle"
             textAnchor="middle"
@@ -119,13 +119,13 @@ function CornerMarkings({
 }
 
 function pointsToPath(points: Vector2[]): string {
-  return points.map((point) => point.join(",")).join(" ");
+  return points.map(point => point.join(',')).join(' ');
 }
 
 function pathToPoints(path: string): Vector2[] {
   return path
-    .split(" ")
-    .map((point) => point.split(",").map(parseFloat)) as Vector2[];
+    .split(' ')
+    .map(point => point.split(',').map(parseFloat)) as Vector2[];
 }
 
 function SideMarkings({
@@ -133,7 +133,7 @@ function SideMarkings({
   sides,
 }: {
   points: Vector2[];
-  sides?: PolygonProps["sides"];
+  sides?: PolygonProps['sides'];
 }) {
   const isClockwise = isDrawnClockwise(points);
 
@@ -154,7 +154,7 @@ function SideMarkings({
           isClockwise ? 12 : -12
         );
 
-        const hasCustomLabel = typeof sides?.[i] === "string";
+        const hasCustomLabel = typeof sides?.[i] === 'string';
         const showLabel = sides?.[i] !== false;
         const label = hasCustomLabel
           ? (sides?.[i] as string)
@@ -163,7 +163,7 @@ function SideMarkings({
         const transform =
           label.length > 1
             ? `rotate(${angledUpside ? angleInDegrees - 180 : angleInDegrees} ${x} ${y})`
-            : "";
+            : '';
 
         if (!showLabel) return null;
         return (
@@ -172,11 +172,11 @@ function SideMarkings({
             x={x}
             y={y}
             style={{
-              fill: "#475569",
-              fontSize: ".75rem",
-              stroke: "none",
+              fill: '#475569',
+              fontSize: '.75rem',
+              stroke: 'none',
               fontWeight: 600,
-              userSelect: "none",
+              userSelect: 'none',
             }}
             transform={transform}
             dominantBaseline="middle"
@@ -223,11 +223,11 @@ function Interactions({
           size="sm"
           className="absolute bottom-0 right-0 hidden group-hover:flex"
           disabled={copyLabel}
-          onClick={(ev) => {
+          onClick={ev => {
             const queryParams = new URLSearchParams(params);
             setCopyLabel(true);
             if (ev.metaKey)
-              return window.open(`/polygon.svg?${queryParams}`, "_blank");
+              return window.open(`/polygon.svg?${queryParams}`, '_blank');
             // const getBaseUrl = () =>
             //   `${window.location.protocol}//${window.location.host}`;
             const url = `/geometry/polygon.svg?${queryParams}`;
@@ -235,7 +235,7 @@ function Interactions({
             navigator.clipboard.writeText(md);
           }}
         >
-          {!copyLabel ? <CopyIcon /> : "Copied!"}
+          {!copyLabel ? <CopyIcon /> : 'Copied!'}
         </Button>
       </div>
     </MotionConfig>
@@ -259,7 +259,7 @@ function DragPoints({
     const newValue = pointsToPath(points);
 
     const info = {
-      role: "system" as const,
+      role: 'system' as const,
       content: `[User has changed the shape points to "${newValue}"]`,
       id,
     };
@@ -279,7 +279,7 @@ function DragPoints({
       <motion.g
         key={i}
         dragMomentum={false}
-        ref={(groupEl) => {
+        ref={groupEl => {
           if (!groupEl) return;
           refs.current[i] = groupEl;
         }}
@@ -311,16 +311,22 @@ function DragPoints({
         }}
       >
         <motion.g whileHover="childHover">
-          <motion.circle cx={x} cy={y} r={5} className="fill-blue-500" />
+          <motion.circle
+            id="points"
+            cx={x}
+            cy={y}
+            r={5}
+            className="fill-blue-500"
+          />
           <motion.circle
             cx={x}
             cy={y}
             r={10}
             initial={{
-              fill: "#3b83f622",
-              outline: "1px solid red",
+              fill: '#3b83f622',
+              outline: '1px solid red',
             }}
-            whileHover={{ r: 14, fill: "#3b83f67a" }}
+            whileHover={{ r: 14, fill: '#3b83f67a' }}
           />
         </motion.g>
       </motion.g>
@@ -333,7 +339,7 @@ function AngleArcs({
   angles,
 }: {
   points: Vector2[];
-  angles?: PolygonProps["angles"];
+  angles?: PolygonProps['angles'];
 }) {
   return points.map(([x, y], i) => {
     const lastIndex = points.length - 1;
@@ -345,9 +351,10 @@ function AngleArcs({
 
     const rightAngle = rawAngle === 90;
 
-    const outerRadius = rightAngle
-      ? 30
-      : d3.scaleLog().domain([20, 180]).range([70, 20])(rawAngle);
+    // const outerRadius = rightAngle
+    //   ? 30
+    //   : d3.scaleLog().domain([20, 180]).range([70, 20])(rawAngle);
+    const outerRadius = 30;
 
     const labelPos = rightAngle
       ? 17
@@ -376,7 +383,7 @@ function AngleArcs({
     const showLabel = angles?.[i] !== false;
 
     const angleLabel = Math.round(rawAngle) + `°`;
-    const showCustomLabel = typeof angles?.[i] === "string";
+    const showCustomLabel = typeof angles?.[i] === 'string';
     const customLabel = angles?.[i] as string;
 
     const label = showCustomLabel ? customLabel : angleLabel;
@@ -390,7 +397,7 @@ function AngleArcs({
             cy={labelY}
             r={2}
             style={{
-              fill: "currentColor",
+              fill: 'currentColor',
             }}
           />
         ) : (
@@ -399,12 +406,12 @@ function AngleArcs({
             y={labelY}
             // className="text-xs fill-slate-600 dark:fill-slate-200 uppercase font-bold tracking-tighter select-none"
             style={{
-              fill: "#475569",
-              fontSize: ".75rem",
-              stroke: "none",
-              textTransform: "uppercase",
+              fill: '#475569',
+              fontSize: '.75rem',
+              stroke: 'none',
+              textTransform: 'uppercase',
               fontWeight: 600,
-              letterSpacing: "-0.05em",
+              letterSpacing: '-0.05em',
             }}
             dominantBaseline="middle"
             textAnchor="middle"
@@ -416,7 +423,7 @@ function AngleArcs({
           <path
             d={arcPath}
             style={{
-              fill: "currentColor",
+              fill: 'currentColor',
             }}
           />
         </g>
@@ -571,7 +578,7 @@ function getCentroid(...arr: Vector2[]): Vector2 {
   return [centroidX, centroidY];
 }
 
-const isServer = typeof window === "undefined";
+const isServer = typeof window === 'undefined';
 type Vector2 = [number, number];
 
 function formatSideLabel(distance: number) {
@@ -589,7 +596,7 @@ export function calculateSideLabels(path: string) {
   const distances = pairs.map(([p1, p2]) =>
     Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2))
   );
-  return distances.map((distance) => formatSideLabel(distance));
+  return distances.map(distance => formatSideLabel(distance));
 }
 
 function formatAngleLabel(angle: number) {
@@ -607,5 +614,5 @@ export function calculateAngleLabels(path: string) {
   const rawAngles = triples.map(([p1, p2, p3]) =>
     calculateCornerAngle(p1, p2, p3)
   );
-  return rawAngles.map((angle) => formatAngleLabel(angle));
+  return rawAngles.map(angle => formatAngleLabel(angle));
 }

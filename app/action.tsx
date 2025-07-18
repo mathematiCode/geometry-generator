@@ -1,100 +1,100 @@
-import "server-only";
+import 'server-only';
 
-import { createAI, createStreamableUI, getMutableAIState } from "ai/rsc";
-import OpenAI from "openai";
+import { createAI, createStreamableUI, getMutableAIState } from 'ai/rsc';
+import OpenAI from 'openai';
 
-import { spinner, BotMessage, SystemMessage } from "@/components/llm-stocks";
+import { spinner, BotMessage, SystemMessage } from '@/components/llm-stocks';
 
 import {
   runAsyncFnWithoutBlocking,
   sleep,
   formatNumber,
   runOpenAICompletion,
-} from "@/lib/utils";
-import { Polygon } from "@/components/polygon";
-import { polygonDrawPrompt, cuboidDrawPrompt } from "./ai-function-prompts";
-import { Cuboid } from "@/components/cuboid";
-import { CuboidEditor, PolygonEditor } from "@/components/geometry/editors";
+} from '@/lib/utils';
+import { Polygon } from '@/components/polygon';
+import { polygonDrawPrompt, cuboidDrawPrompt } from './ai-function-prompts';
+import { Cuboid } from '@/components/cuboid';
+import { CuboidEditor, PolygonEditor } from '@/components/geometry/editors';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "",
+  apiKey: process.env.OPENAI_API_KEY || '',
 });
 
-async function confirmPurchase(symbol: string, price: number, amount: number) {
-  "use server";
+// async function confirmPurchase(symbol: string, price: number, amount: number) {
+//   'use server';
 
-  const aiState = getMutableAIState<typeof AI>();
+//   const aiState = getMutableAIState<typeof AI>();
 
-  const purchasing = createStreamableUI(
-    <div className="inline-flex items-start gap-1 md:items-center">
-      {spinner}
-      <p className="mb-2">
-        Purchasing {amount} ${symbol}...
-      </p>
-    </div>
-  );
+//   const purchasing = createStreamableUI(
+//     <div className="inline-flex items-start gap-1 md:items-center">
+//       {spinner}
+//       <p className="mb-2">
+//         Purchasing {amount} ${symbol}...
+//       </p>
+//     </div>
+//   );
 
-  const systemMessage = createStreamableUI(null);
+const systemMessage = createStreamableUI(null);
 
-  runAsyncFnWithoutBlocking(async () => {
-    // You can update the UI at any point.
-    await sleep(1000);
+//   runAsyncFnWithoutBlocking(async () => {
+//     // You can update the UI at any point.
+//     await sleep(1000);
 
-    purchasing.update(
-      <div className="inline-flex items-start gap-1 md:items-center">
-        {spinner}
-        <p className="mb-2">
-          Purchasing {amount} ${symbol}... working on it...
-        </p>
-      </div>
-    );
+//     purchasing.update(
+//       <div className="inline-flex items-start gap-1 md:items-center">
+//         {spinner}
+//         <p className="mb-2">
+//           Purchasing {amount} ${symbol}... working on it...
+//         </p>
+//       </div>
+//     );
 
-    await sleep(1000);
+//     await sleep(1000);
 
-    purchasing.done(
-      <div>
-        <p className="mb-2">
-          You have successfully purchased {amount} ${symbol}. Total cost:{" "}
-          {formatNumber(amount * price)}
-        </p>
-      </div>
-    );
+//     purchasing.done(
+//       <div>
+//         <p className="mb-2">
+//           You have successfully purchased {amount} ${symbol}. Total cost:{' '}
+//           {formatNumber(amount * price)}
+//         </p>
+//       </div>
+//     );
 
-    systemMessage.done(
-      <SystemMessage>
-        You have purchased {amount} shares of {symbol} at ${price}. Total cost ={" "}
-        {formatNumber(amount * price)}.
-      </SystemMessage>
-    );
+//     systemMessage.done(
+//       <SystemMessage>
+//         You have purchased {amount} shares of {symbol} at ${price}. Total cost ={' '}
+//         {formatNumber(amount * price)}.
+//       </SystemMessage>
+//     );
 
-    aiState.done([
-      ...aiState.get(),
-      {
-        role: "system",
-        content: `[User has purchased ${amount} shares of ${symbol} at ${price}. Total cost = ${
-          amount * price
-        }]`,
-      },
-    ]);
-  });
+//     aiState.done([
+//       ...aiState.get(),
+//       {
+//         role: 'system',
+//         content: `[User has purchased ${amount} shares of ${symbol} at ${price}. Total cost = ${
+//           amount * price
+//         }]`,
+//       },
+//     ]);
+//   });
 
-  return {
-    purchasingUI: purchasing.value,
-    newMessage: {
-      id: Date.now(),
-      display: systemMessage.value,
-    },
-  };
-}
+//   return {
+//     purchasingUI: purchasing.value,
+//     newMessage: {
+//       id: Date.now(),
+//       display: systemMessage.value,
+//     },
+//   };
+// }
 
 async function submitUserMessage(content: string, newPath?: string) {
-  "use server";
+  'use server';
 
   const aiState = getMutableAIState<typeof AI>();
   aiState.update([
     ...aiState.get(),
     {
-      role: "user",
+      role: 'user',
       content,
     },
   ]);
@@ -104,11 +104,11 @@ async function submitUserMessage(content: string, newPath?: string) {
   );
 
   const completion = runOpenAICompletion(openai, {
-    model: "gpt-4-turbo",
+    model: 'gpt-4-turbo',
     stream: true,
     messages: [
       {
-        role: "system",
+        role: 'system',
         content: `\
 You are a math visualisation assistant specializing in geometric shapes.
 You and the user can create math geometry for teaching math.
@@ -131,31 +131,31 @@ Messages inside [] means that it's a UI element or a user event. For example:
     reply.update(<BotMessage>{content}</BotMessage>);
     if (isFinal) {
       reply.done();
-      aiState.done([...aiState.get(), { role: "assistant", content }]);
+      aiState.done([...aiState.get(), { role: 'assistant', content }]);
     }
   });
 
-  completion.onFunctionCall("draw_shape", async (props) => {
+  completion.onFunctionCall('draw_shape', async props => {
     reply.done(<PolygonEditor {...props} />);
 
     aiState.done([
       ...aiState.get(),
       {
-        role: "function",
-        name: "draw_shape",
+        role: 'function',
+        name: 'draw_shape',
         content: JSON.stringify(props),
       },
     ]);
   });
 
-  completion.onFunctionCall("draw_cuboid", async (props) => {
+  completion.onFunctionCall('draw_cuboid', async props => {
     reply.done(<CuboidEditor {...props} />);
 
     aiState.done([
       ...aiState.get(),
       {
-        role: "function",
-        name: "draw_solid_geometry",
+        role: 'function',
+        name: 'draw_solid_geometry',
         content: JSON.stringify(props),
       },
     ]);
@@ -170,7 +170,7 @@ Messages inside [] means that it's a UI element or a user event. For example:
 // Define necessary types and create the AI.
 
 const initialAIState: {
-  role: "user" | "assistant" | "system" | "function";
+  role: 'user' | 'assistant' | 'system' | 'function';
   content: string;
   id?: string;
   name?: string;
@@ -184,7 +184,7 @@ const initialUIState: {
 export const AI = createAI({
   actions: {
     submitUserMessage,
-    confirmPurchase,
+    // confirmPurchase,
   },
   initialUIState,
   initialAIState,
