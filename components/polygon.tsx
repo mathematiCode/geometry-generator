@@ -58,7 +58,7 @@ export function Polygon({ onPointsChage, fillColor, ...props }: Props) {
         {Boolean(props.sides?.length) && (
           <SideMarkings points={points} sides={props.sides} />
         )}
-        {/* {!isServer && (
+        {!isServer && (
           <DragPoints
             points={points}
             onUpdate={p => {
@@ -66,7 +66,7 @@ export function Polygon({ onPointsChage, fillColor, ...props }: Props) {
               onPointsChage?.(pointsToPath(p));
             }}
           />
-        )} */}
+        )}
       </motion.svg>
     </Interactions>
   );
@@ -354,10 +354,9 @@ function AngleArcs({
 
     const rightAngle = rawAngle === 90;
 
-    // const outerRadius = rightAngle
-    //   ? 30
-    //   : d3.scaleLog().domain([20, 180]).range([70, 20])(rawAngle);
-    const outerRadius = 30;
+    const outerRadius = rightAngle
+      ? 30
+      : d3.scaleLog().domain([20, 180]).range([70, 20])(rawAngle);
 
     const labelPos = rightAngle
       ? 17
@@ -471,27 +470,27 @@ function getAngles(
   return { startAngle, endAngle };
 }
 
-function getLineLengths(points: Vector2[]): number[] {
-  let lengths = [];
-  for (let i = 0; i < points.length; i++) {
-    // get next index (loop to start for final point)
-    const nextIndex = i === points.length - 1 ? 0 : i + 1;
-    lengths.push(calculateDistance(points[i], points[nextIndex]));
-  }
-  return lengths;
-}
+// function getLineLengths(points: Vector2[]): number[] {
+//   let lengths = [];
+//   for (let i = 0; i < points.length; i++) {
+//     // get next index (loop to start for final point)
+//     const nextIndex = i === points.length - 1 ? 0 : i + 1;
+//     lengths.push(calculateDistance(points[i], points[nextIndex]));
+//   }
+//   return lengths;
+// }
 
 function calculateDistance(pt1: Vector2, pt2: Vector2) {
   return Math.sqrt(Math.pow(pt1[0] - pt2[0], 2) + Math.pow(pt1[1] - pt2[1], 2));
 }
 
-function getStartAngle(p1: Vector2, p2: Vector2, p3: Vector2): number {
-  let theta = Math.atan2(p2[0] - p1[0], p2[1] - p1[1]);
-  let theta2 = Math.atan2(p3[0] - p2[0], p3[1] - p2[1]);
-  let angle = theta2 - theta;
-  if (angle < 0) angle = 360 + angle;
-  return angle;
-}
+// function getStartAngle(p1: Vector2, p2: Vector2, p3: Vector2): number {
+//   let theta = Math.atan2(p2[0] - p1[0], p2[1] - p1[1]);
+//   let theta2 = Math.atan2(p3[0] - p2[0], p3[1] - p2[1]);
+//   let angle = theta2 - theta;
+//   if (angle < 0) angle = 360 + angle;
+//   return angle;
+// }
 
 function calculateCornerAngle(p1: Vector2, p2: Vector2, p3: Vector2): number {
   // Create vectors from point p2 to p1 and p3
@@ -537,16 +536,16 @@ function averageAngles(theta1: number, theta2: number): number {
   return thetaAvg;
 }
 
-function findPointAtAngleAndDistance(
-  centroid: Vector2,
-  angle: number,
-  distance: number
-): Vector2 {
-  return [
-    centroid[0] + distance * Math.cos(angle),
-    centroid[1] + distance * Math.sin(angle),
-  ];
-}
+// function findPointAtAngleAndDistance(
+//   centroid: Vector2,
+//   angle: number,
+//   distance: number
+// ): Vector2 {
+//   return [
+//     centroid[0] + distance * Math.cos(angle),
+//     centroid[1] + distance * Math.sin(angle),
+//   ];
+// }
 
 function calculateSignedArea(points: number[][]): number {
   let area = 0;
@@ -566,20 +565,20 @@ function isDrawnClockwise(points: number[][]) {
   return area! > 0;
 }
 
-function getCentroid(...arr: Vector2[]): Vector2 {
-  let sumX = 0;
-  let sumY = 0;
+// function getCentroid(...arr: Vector2[]): Vector2 {
+//   let sumX = 0;
+//   let sumY = 0;
 
-  for (let i = 0; i < arr.length; i++) {
-    sumX += arr[i][0];
-    sumY += arr[i][1];
-  }
+//   for (let i = 0; i < arr.length; i++) {
+//     sumX += arr[i][0];
+//     sumY += arr[i][1];
+//   }
 
-  let centroidX = sumX / arr.length;
-  let centroidY = sumY / arr.length;
+//   let centroidX = sumX / arr.length;
+//   let centroidY = sumY / arr.length;
 
-  return [centroidX, centroidY];
-}
+//   return [centroidX, centroidY];
+// }
 
 const isServer = typeof window === 'undefined';
 type Vector2 = [number, number];
