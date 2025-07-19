@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 const exampleMessages = [
-  "Draw a cuboid with 2x1x1 dimensions.",
-  "A cuboid with the diagonal A-B and all the side lengths.",
-  "Draw a trapazoid.",
-  "Draw a right angled triangle. And mark the 90degree angle.",
+  'Draw a cuboid with 2x1x1 dimensions.',
+  'A cuboid with the diagonal A-B and all the side lengths.',
+  'Draw a trapezoid.',
+  'Draw a right angled triangle. And mark the 90 degree angle.',
 ];
 
 export function EmptyScreen({

@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const drawCylinder = {
-  name: "draw_cylinder",
+  name: 'draw_cylinder',
   description: `\
   Get the current paramaters for drawing a 3D cylinder. The shape will be drawn on the screen.
   Keep in mind the bounds, so you dont draw outside width of 300 and height of 200. Try to use all of the space, but leave padding.`,
@@ -37,7 +37,7 @@ In the svg line format eg. [{ "x1": 50, "y1": 50, "x2": 50, "y2": 150 }, { "x1":
 };
 
 export const polygonDrawPrompt = {
-  name: "draw_shape",
+  name: 'draw_shape',
   description: `\
   Get the current paramaters for drawing a 2D geometric shape. The shape will be drawn on the screen.
   Keep in mind the bounds, so you dont draw outside width of 300 and height of 200. Try to use all of the space, but leave padding.
@@ -47,6 +47,12 @@ export const polygonDrawPrompt = {
       .string()
       .describe(
         `The points to draw the shape. In SVG shape points format e.g. "200,10 250,190 150,190"`
+      ),
+    fillColor: z
+      .string()
+      .optional()
+      .describe(
+        `The fill color of the shape. Can be any valid CSS color like "red", "#ff0000", "rgba(255,0,0,0.5)", etc.`
       ),
     angles: z
       .array(z.union([z.string(), z.boolean()]))
@@ -77,7 +83,7 @@ export const polygonDrawPrompt = {
 };
 
 export const cuboidDrawPrompt = {
-  name: "draw_cuboid",
+  name: 'draw_cuboid',
   description: `\
 Get the current paramaters for drawing a 3D cuboid. The shape will be drawn on the screen.
 Don't nessessarily add all the parameters (points, angles, corners, etc..) you can add one if you want. Try to keep it simple at first.
@@ -89,7 +95,7 @@ The body diagonal is [8, 1] indexes of the corners. eg. [false, 'A', false, fals
 The size of the cuboid. In the format of [width, depth]. eg. [1, 0.5] keep the width and depth between 0.1 and 2. Keep one of the values close to 1.
 The size will be translated to the user as 10cm x 5cm. So if the user asks for different sizes, you can use the same size but change the translation.`
     ),
-    diagonals: z.array(z.enum(["base", "front", "body"])).optional().describe(`\
+    diagonals: z.array(z.enum(['base', 'front', 'body'])).optional().describe(`\
 The diagonals to draw on the shape. The base diagonal is the diagonal on the base of the cuboid. eg. ['body']
 The front diagonal is the diagonal on the front face of the cuboid.
 The body diagonal is the diagonal that goes through the cuboid from the top front to the bottom back.

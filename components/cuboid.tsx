@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Camera, Canvas, RootState, useFrame } from "@react-three/fiber";
+import { Camera, Canvas, RootState, useFrame } from '@react-three/fiber';
 import {
   MutableRefObject,
   forwardRef,
@@ -9,17 +9,17 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-} from "react";
-import * as THREE from "three";
-import { SVGRenderer } from "three-stdlib";
-import { motion } from "framer-motion";
-import { createContext } from "react";
-import { MotionValue, useMotionValue } from "framer-motion";
-import { OrbitControls } from "@react-three/drei";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { CopyIcon } from "@radix-ui/react-icons";
-import { cuboidDrawPrompt } from "@/app/ai-function-prompts";
+} from 'react';
+import * as THREE from 'three';
+import { SVGRenderer } from 'three-stdlib';
+import { motion } from 'framer-motion';
+import { createContext } from 'react';
+import { MotionValue, useMotionValue } from 'framer-motion';
+import { OrbitControls } from '@react-three/drei';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { CopyIcon } from '@radix-ui/react-icons';
+import { cuboidDrawPrompt } from '@/app/ai-function-prompts';
 
 const size = { width: 300, height: 250 };
 const defaultZoom = 100;
@@ -29,7 +29,7 @@ interface CameraState {
   rotation?: number[];
   zoom?: number;
 }
-export type CuboidProps = z.infer<(typeof cuboidDrawPrompt)["parameters"]>;
+export type CuboidProps = z.infer<(typeof cuboidDrawPrompt)['parameters']>;
 type Props = CuboidProps &
   CameraState & {
     className?: string;
@@ -86,17 +86,17 @@ function Interactions({
         size="sm"
         className="absolute bottom-0 right-0 hidden group-hover:flex"
         disabled={copyLabel}
-        onClick={(ev) => {
+        onClick={ev => {
           const queryParams = new URLSearchParams(params as any);
           setCopyLabel(true);
           if (ev.metaKey)
-            return window.open(`/cuboid.svg?${queryParams}`, "_blank");
+            return window.open(`/cuboid.svg?${queryParams}`, '_blank');
           const url = `/geometry/cuboid.svg?${queryParams}`;
           const md = `![Image](${url})`;
           navigator.clipboard.writeText(md);
         }}
       >
-        {!copyLabel ? <CopyIcon /> : "Copied!"}
+        {!copyLabel ? <CopyIcon /> : 'Copied!'}
       </Button>
     </div>
   );
@@ -105,11 +105,11 @@ function Interactions({
 const Shape = forwardRef<
   THREE.Mesh,
   {
-    size: Props["size"];
+    size: Props['size'];
     onUpdate: (arg: { state: RootState }) => void;
   }
 >(({ onUpdate, size }, meshRef) => {
-  useFrame((state) => onUpdate({ state }), 1);
+  useFrame(state => onUpdate({ state }), 1);
 
   return (
     <mesh ref={meshRef}>
@@ -124,7 +124,7 @@ const CanvasContext = createContext<{
       enabled: boolean;
     }>
   >;
-  onSizeChange: Props["onSizeChange"];
+  onSizeChange: Props['onSizeChange'];
   cameraRef: MutableRefObject<Camera>;
   cuboid: {
     vertices: MotionValue<Point[]>;
@@ -172,7 +172,7 @@ function CuboidInternals(props: Props) {
             zoom: props.zoom ?? defaultZoom,
           }}
           // frameloop="demand"
-          gl={(canvas) => {
+          gl={canvas => {
             const gl = new SVGRenderer();
             gl.domElement = svgRef.current;
             //@ts-ignore
@@ -185,14 +185,14 @@ function CuboidInternals(props: Props) {
           <OrbitControls
             {...orbitControllerProps}
             zoomSpeed={0.4}
-            onChange={(ev) => {
+            onChange={ev => {
               if (!ev) return;
               const camera = ev.target.object;
               const pos = camera.position;
               //@ts-ignore
               const zoom = camera.zoom;
               props.onCameraChange?.({
-                rotation: pos.toArray().map((v) => +v.toFixed(3)),
+                rotation: pos.toArray().map(v => +v.toFixed(3)),
                 zoom: Math.floor(zoom),
               });
             }}
@@ -218,12 +218,12 @@ function CuboidInternals(props: Props) {
         whileHover="containerHover"
         whileTap="containerHover"
         style={{
-          outline: "none",
-          userSelect: "none",
-          WebkitUserSelect: "none",
+          outline: 'none',
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
           fontFamily:
             "ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
-          color: "#94a3b8",
+          color: '#94a3b8',
         }}
         viewBox={`${-size.width / 2} ${-size.height / 2} ${size.width} ${size.height}`}
         version="1.1"
@@ -241,24 +241,24 @@ function CuboidInternals(props: Props) {
   );
 }
 
-function Sides({ sides }: { sides: Props["sides"] }) {
+function Sides({ sides }: { sides: Props['sides'] }) {
   const sidesRef = useRef<SVGPolylineElement[]>([]);
   const labelRefs = useRef<SVGTextElement[]>([]);
   const { cuboid } = useGeometry();
 
-  cuboid.vertices.on("change", updateSides);
+  cuboid.vertices.on('change', updateSides);
 
   function updateSides() {
     const sides = getIndexes().map(calculateSides);
     sides.forEach((props, i) => {
       const side = sidesRef.current[i];
-      side.setAttribute("points", props.points);
+      side.setAttribute('points', props.points);
 
       const label = labelRefs.current[i];
-      label.setAttribute("x", props.x.toString());
-      label.setAttribute("y", props.y.toString());
-      label.setAttribute("transform", props.transform);
-      label.setAttribute("text-anchor", props.textAnchor);
+      label.setAttribute('x', props.x.toString());
+      label.setAttribute('y', props.y.toString());
+      label.setAttribute('transform', props.transform);
+      label.setAttribute('text-anchor', props.textAnchor);
       label.textContent = props.label;
     });
   }
@@ -278,7 +278,7 @@ function Sides({ sides }: { sides: Props["sides"] }) {
     const b = verts[indexes[1]];
     const center = getCentroid(...verts);
 
-    const offsetPoints = [a, b].map((p) => {
+    const offsetPoints = [a, b].map(p => {
       // Calculate the direction vector components from center to the point
       const dirX = p.x - center.x;
       const dirY = p.y - center.y;
@@ -306,7 +306,7 @@ function Sides({ sides }: { sides: Props["sides"] }) {
 
     const distance = Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
 
-    const points = offsetPoints.map(({ x, y }) => `${x},${y}`).join(" ");
+    const points = offsetPoints.map(({ x, y }) => `${x},${y}`).join(' ');
 
     const geometry = cuboid.mesh.current.geometry as THREE.BoxGeometry;
     const { width, depth } = geometry.parameters;
@@ -315,17 +315,17 @@ function Sides({ sides }: { sides: Props["sides"] }) {
     if (sides?.[sideIndex] === true) {
       const side = [width, depth, 1][sideIndex];
       label = formatSideLabel(side);
-    } else if (typeof sides?.[sideIndex] === "string") {
+    } else if (typeof sides?.[sideIndex] === 'string') {
       label = sides[sideIndex] as string;
     } else {
-      label = "";
+      label = '';
     }
 
     const small = distance < 45 || label.length < 2;
-    const textAnchor = small ? "start" : "middle";
+    const textAnchor = small ? 'start' : 'middle';
 
     const transform = small
-      ? "translate(0, 0)"
+      ? 'translate(0, 0)'
       : `rotate(${angleInDegrees} ${x} ${y})`;
 
     return { points, transform, x, y, textAnchor, label };
@@ -336,7 +336,7 @@ function Sides({ sides }: { sides: Props["sides"] }) {
     .map(({ points, transform, x, y, textAnchor, label }, i) => [
       <polyline
         key={`p-${i}`}
-        ref={(el) => {
+        ref={el => {
           sidesRef.current[i] = el!;
         }}
         points={points}
@@ -345,7 +345,7 @@ function Sides({ sides }: { sides: Props["sides"] }) {
       />,
       <text
         key={`t-${i}`}
-        ref={(el) => {
+        ref={el => {
           labelRefs.current[i] = el!;
         }}
         x={x}
@@ -354,7 +354,7 @@ function Sides({ sides }: { sides: Props["sides"] }) {
         dominantBaseline="middle"
         textAnchor={textAnchor}
         style={{
-          fill: "#475569",
+          fill: '#475569',
           fontSize: 11,
           fontWeight: 500,
         }}
@@ -364,18 +364,18 @@ function Sides({ sides }: { sides: Props["sides"] }) {
     ]);
 }
 
-function Diagonals({ types }: { types: Props["diagonals"] }) {
+function Diagonals({ types }: { types: Props['diagonals'] }) {
   const { cuboid, cameraRef } = useGeometry();
   const polylinesRef = useRef<SVGPolylineElement[]>([]);
 
-  cuboid.vertices.on("change", (verts) => {
+  cuboid.vertices.on('change', verts => {
     getIndexes(types)
-      .map((indexes) => calculateDiagonals(verts, indexes))
+      .map(indexes => calculateDiagonals(verts, indexes))
       .map((diagonals, i) => {
         if (!polylinesRef.current[i]) return;
         const polyline = polylinesRef.current[i];
-        polyline.setAttribute("points", diagonals.points);
-        polyline.setAttribute("stroke-dasharray", diagonals.strokeDasharray);
+        polyline.setAttribute('points', diagonals.points);
+        polyline.setAttribute('stroke-dasharray', diagonals.strokeDasharray);
       });
   });
 
@@ -404,33 +404,33 @@ function Diagonals({ types }: { types: Props["diagonals"] }) {
 
     const points = [verts[indexes[0]], verts[indexes[1]]]
       .map(({ x, y }) => `${x},${y}`)
-      .join(" ");
+      .join(' ');
     return {
       points,
       strokeDasharray: `${distance * 3} ${distance * 2}`,
     };
   }
 
-  function getIndexes(types: Props["diagonals"]): [number, number][] {
+  function getIndexes(types: Props['diagonals']): [number, number][] {
     if (!types) return [];
-    return types.map((type) => {
+    return types.map(type => {
       switch (type) {
-        case "base":
+        case 'base':
           return [7, 3];
-        case "front":
+        case 'front':
           return [7, 0];
-        case "body":
+        case 'body':
           return [7, 1];
       }
     });
   }
 
   return getIndexes(types)
-    .map((indexes) => calculateDiagonals(cuboid.vertices.get(), indexes))
+    .map(indexes => calculateDiagonals(cuboid.vertices.get(), indexes))
     .map(({ points, strokeDasharray }, i) => (
       <polyline
         key={i}
-        ref={(el) => {
+        ref={el => {
           polylinesRef.current[i] = el!;
         }}
         points={points}
@@ -441,26 +441,26 @@ function Diagonals({ types }: { types: Props["diagonals"] }) {
     ));
 }
 
-function Gizmos({ size }: { size: Props["size"] }) {
+function Gizmos({ size }: { size: Props['size'] }) {
   const { cuboid, setOrbitControllerProps, onSizeChange } = useGeometry();
   const xScaleElRef = useRef<SVGCircleElement>(null!);
   const zScaleElRef = useRef<SVGCircleElement>(null!);
 
-  const xOriginX = useMotionValue("");
-  const xOriginY = useMotionValue("");
+  const xOriginX = useMotionValue('');
+  const xOriginY = useMotionValue('');
 
-  const zOriginX = useMotionValue("");
-  const zOriginY = useMotionValue("");
+  const zOriginX = useMotionValue('');
+  const zOriginY = useMotionValue('');
 
   useEffect(() => {
-    cuboid.vertices.on("change", (verts) => {
+    cuboid.vertices.on('change', verts => {
       if (!xScaleElRef.current || !zScaleElRef.current) return;
       const xPoint = getCentroid(verts[2], verts[3]);
-      xScaleElRef.current.setAttribute("cx", xPoint.x.toString());
-      xScaleElRef.current.setAttribute("cy", xPoint.y.toString());
+      xScaleElRef.current.setAttribute('cx', xPoint.x.toString());
+      xScaleElRef.current.setAttribute('cy', xPoint.y.toString());
       const zPoint = getCentroid(verts[2], verts[7]);
-      zScaleElRef.current.setAttribute("cx", zPoint.x.toString());
-      zScaleElRef.current.setAttribute("cy", zPoint.y.toString());
+      zScaleElRef.current.setAttribute('cx', zPoint.x.toString());
+      zScaleElRef.current.setAttribute('cy', zPoint.y.toString());
 
       xOriginX.set(`${xPoint.x}px`);
       xOriginY.set(`${xPoint.y}px`);
@@ -507,7 +507,7 @@ function Gizmos({ size }: { size: Props["size"] }) {
         style={{
           originX: xOriginX,
           originY: xOriginY,
-          cursor: "ew-resize",
+          cursor: 'ew-resize',
         }}
         variants={{
           containerHover: {
@@ -543,7 +543,7 @@ function Gizmos({ size }: { size: Props["size"] }) {
         style={{
           originX: zOriginX,
           originY: zOriginY,
-          cursor: "ns-resize",
+          cursor: 'ns-resize',
         }}
         variants={{
           containerHover: {
@@ -565,25 +565,25 @@ function Wireframe() {
   const zScaleElRef = useRef<SVGCircleElement>(null!);
 
   useEffect(() => {
-    cuboid.vertices.on("change", (verts) => {
+    cuboid.vertices.on('change', verts => {
       polylineRef.current.setAttribute(
-        "points",
-        verts.map(({ x, y }) => `${x},${y}`).join(" ")
+        'points',
+        verts.map(({ x, y }) => `${x},${y}`).join(' ')
       );
       if (!xScaleElRef.current || !zScaleElRef.current) return;
       const xPoint = getCentroid(verts[2], verts[3]);
-      xScaleElRef.current.setAttribute("cx", xPoint.x.toString());
-      xScaleElRef.current.setAttribute("cy", xPoint.y.toString());
+      xScaleElRef.current.setAttribute('cx', xPoint.x.toString());
+      xScaleElRef.current.setAttribute('cy', xPoint.y.toString());
       const zPoint = getCentroid(verts[2], verts[7]);
-      zScaleElRef.current.setAttribute("cx", zPoint.x.toString());
-      zScaleElRef.current.setAttribute("cy", zPoint.y.toString());
+      zScaleElRef.current.setAttribute('cx', zPoint.x.toString());
+      zScaleElRef.current.setAttribute('cy', zPoint.y.toString());
     });
   });
 
   const points = cuboid.vertices
     .get()
     .map(({ x, y }) => `${x},${y}`)
-    .join(" ");
+    .join(' ');
 
   const enable = () => setOrbitControllerProps({ enabled: true });
   const disable = () => setOrbitControllerProps({ enabled: false });
@@ -648,17 +648,17 @@ function Wireframe() {
   );
 }
 
-function CornerVerts({ corners }: { corners: Props["corners"] }) {
+function CornerVerts({ corners }: { corners: Props['corners'] }) {
   const { cuboid } = useGeometry();
   const textRefs = useRef<SVGTextElement[]>([]);
 
-  cuboid.vertices.on("change", updateCornerLabels);
+  cuboid.vertices.on('change', updateCornerLabels);
 
   function getCorners(verts: Point[]) {
     const center = getCentroid(...verts);
 
     const orderMap = [0, 1, 4, 5, 2, 3, 6, 7];
-    const cornerLabelsReordered = orderMap.map((i) =>
+    const cornerLabelsReordered = orderMap.map(i =>
       corners?.[i] ? corners[i] : false
     );
 
@@ -667,7 +667,7 @@ function CornerVerts({ corners }: { corners: Props["corners"] }) {
       const x = p.x + (p.x - center.x) * 0.12;
       const y = p.y + (p.y - center.y) * 0.12;
 
-      const hasOwnLabel = typeof cornerLabelsReordered?.[i] === "string";
+      const hasOwnLabel = typeof cornerLabelsReordered?.[i] === 'string';
       const label = hasOwnLabel
         ? (cornerLabelsReordered?.[i] as string)
         : String.fromCharCode(65 + orderMap[i]);
@@ -684,8 +684,8 @@ function CornerVerts({ corners }: { corners: Props["corners"] }) {
     const corners = getCorners(verts);
     corners.forEach((corner, i) => {
       const text = textRefs.current[i];
-      text.setAttribute("x", corner.x.toString());
-      text.setAttribute("y", corner.y.toString());
+      text.setAttribute('x', corner.x.toString());
+      text.setAttribute('y', corner.y.toString());
     });
   }
 
@@ -695,14 +695,14 @@ function CornerVerts({ corners }: { corners: Props["corners"] }) {
       {...pos}
       dominantBaseline="middle"
       textAnchor="middle"
-      ref={(el) => {
+      ref={el => {
         textRefs.current[i] = el!;
       }}
       style={{
-        fill: "#475569",
+        fill: '#475569',
         fontSize: 11,
-        stroke: "none",
-        textTransform: "uppercase",
+        stroke: 'none',
+        textTransform: 'uppercase',
         fontWeight: 500,
         letterSpacing: -0.8,
       }}
@@ -717,12 +717,12 @@ function Faces() {
   const { cuboid, cameraRef } = useGeometry();
   const faceRefs = useRef<SVGPolygonElement[]>([]);
 
-  cuboid.vertices.on("change", updateFaces);
+  cuboid.vertices.on('change', updateFaces);
 
   function calculateFaces(verts: Point[]) {
     return Array.from({ length: 6 }, (_, i) => {
       const [p1, p2, p3, p4] = verts.slice(i * 4, i * 4 + 4);
-      const points = [p1, p2, p4, p3].map((v) => `${v.x},${v.y}`).join(" ");
+      const points = [p1, p2, p4, p3].map(v => `${v.x},${v.y}`).join(' ');
 
       const normal = new THREE.Vector3();
       const a = new THREE.Vector3();
@@ -746,8 +746,8 @@ function Faces() {
 
       return {
         points,
-        fill: flipped ? "rgba(148, 163, 184, 0.1)" : "rgba(0,0,0,0)",
-        stroke: flipped ? "#94a3b839" : "#94a3b8",
+        fill: flipped ? 'rgba(148, 163, 184, 0.1)' : 'rgba(0,0,0,0)',
+        stroke: flipped ? '#94a3b839' : '#94a3b8',
       };
     });
   }
@@ -756,16 +756,16 @@ function Faces() {
     const faces = calculateFaces(verts);
     faces.forEach((face, i) => {
       const ref = faceRefs.current[i];
-      ref.setAttribute("points", face.points);
-      ref.setAttribute("fill", face.fill);
-      ref.setAttribute("stroke", face.stroke);
+      ref.setAttribute('points', face.points);
+      ref.setAttribute('fill', face.fill);
+      ref.setAttribute('stroke', face.stroke);
     });
   }
 
   return calculateFaces(cuboid.vertices.get()).map((face, i) => (
     <polygon
       key={i}
-      ref={(el) => {
+      ref={el => {
         faceRefs.current[i] = el!;
       }}
       strokeLinejoin="round"
@@ -850,8 +850,8 @@ function getCentroid(...arr: Point[]): Point {
   return { x: centroidX, y: centroidY };
 }
 
-const isServer = typeof window === "undefined";
+const isServer = typeof window === 'undefined';
 
 export function formatSideLabel(size: number): string {
-  return (size * 10).toFixed(0) + " cm";
+  return (size * 10).toFixed(0) + ' cm';
 }

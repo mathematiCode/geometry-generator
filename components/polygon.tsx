@@ -17,13 +17,16 @@ type Props = PolygonProps & {
   onPointsChage?: (points: string) => void;
 };
 
-export function Polygon({ onPointsChage, ...props }: Props) {
+export function Polygon({ onPointsChage, fillColor, ...props }: Props) {
   const [points, setPoints] = useState(() => pathToPoints(props.points));
 
   const path = pointsToPath(points);
 
   return (
-    <Interactions render={!isServer} params={{ ...props, points: path }}>
+    <Interactions
+      render={!isServer}
+      params={{ ...props, points: path, fillColor }}
+    >
       <motion.svg
         whileHover="containerHover"
         style={{
@@ -41,7 +44,7 @@ export function Polygon({ onPointsChage, ...props }: Props) {
         <polygon
           style={{
             strokeWidth: 1,
-            fill: '#94a3b822',
+            fill: fillColor || '#94a3b822',
             stroke: 'currentcolor',
           }}
           points={path}
@@ -55,7 +58,7 @@ export function Polygon({ onPointsChage, ...props }: Props) {
         {Boolean(props.sides?.length) && (
           <SideMarkings points={points} sides={props.sides} />
         )}
-        {!isServer && (
+        {/* {!isServer && (
           <DragPoints
             points={points}
             onUpdate={p => {
@@ -63,7 +66,7 @@ export function Polygon({ onPointsChage, ...props }: Props) {
               onPointsChage?.(pointsToPath(p));
             }}
           />
-        )}
+        )} */}
       </motion.svg>
     </Interactions>
   );
